@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0a0f13">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>SCENTORY — مكتبتك العطرية</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" aria-label="القائمة الرئيسية">
+    <button class="logo-btn nav-link active" data-view="discover" aria-label="الرئيسية">
+      <span class="logo-mark">✦</span>
+      <span class="logo-copy"><strong>SCENTORY</strong><small>YOUR SCENT LIBRARY</small></span>
+    </button>
+
+    <nav class="side-nav">
+      <button class="nav-link active" data-view="discover"><span>⌂</span><b>الرئيسية</b></button>
+      <button class="nav-link" data-view="discover" data-focus-search="1"><span>⌕</span><b>اكتشف العطور</b></button>
+      <div class="nav-section-label">مكتبتي</div>
+      <button class="nav-link" data-view="library" data-list="owned"><span>▣</span><b>أملكها</b><i id="count-owned">0</i></button>
+      <button class="nav-link" data-view="library" data-list="try"><span>♧</span><b>أريد تجربتها</b><i id="count-try">0</i></button>
+      <button class="nav-link" data-view="library" data-list="buy"><span>▢</span><b>أريد شراءها</b><i id="count-buy">0</i></button>
+      <button class="nav-link" data-view="library" data-list="favorite"><span>♡</span><b>المفضلة</b><i id="count-favorite">0</i></button>
+      <div class="nav-divider"></div>
+      <button class="nav-link" data-view="collections"><span>◇</span><b>المجموعات</b></button>
+      <button class="nav-link" data-view="compare"><span>⇄</span><b>المقارنة</b></button>
+      <button class="nav-link" data-view="dna"><span>⌁</span><b>تحليل الذوق</b></button>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <button class="profile-card" id="profileButton"><span class="avatar">ع</span><span><b>مكتبتي الخاصة</b><small>محفوظة على الجهاز</small></span><em>›</em></button>
+      <button class="theme-row" id="themeToggle"><span>☾</span><b>الوضع الداكن</b><i class="switch on"><u></u></i></button>
+    </div>
+  </aside>
+
+  <main class="workspace">
+    <header class="topbar">
+      <div class="searchbox">
+        <span>⌕</span>
+        <input id="searchInput" type="search" autocomplete="off" placeholder="ابحث عن عطر، ماركة، نوته أو أكورد…">
+        <button id="clearSearch" title="مسح البحث" aria-label="مسح البحث">×</button>
+      </div>
+      <div class="top-actions">
+        <button class="round-btn" id="mobileFilters" title="الفلاتر">☷</button>
+        <button class="round-btn" id="quickProfile" title="الحساب">ع</button>
+      </div>
+    </header>
+
+    <section class="view active" id="view-discover">
+      <div class="view-head">
+        <div>
+          <h1>اكتشف العطور</h1>
+          <p><span id="resultCount">12</span> عطر في النسخة التجريبية</p>
+        </div>
+        <div class="head-actions">
+          <label class="sort-wrap">ترتيب:
+            <select id="sortSelect">
+              <option value="rating">الأعلى تقييمًا</option>
+              <option value="year">الأحدث</option>
+              <option value="name">الاسم</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="filter-row" id="filterRow">
+        <button class="filter-chip active" data-filter="all">الكل</button>
+        <button class="filter-chip" data-filter="Fresh">منعش</button>
+        <button class="filter-chip" data-filter="Woody">خشبي</button>
+        <button class="filter-chip" data-filter="Vanilla">فانيلا</button>
+        <button class="filter-chip" data-filter="Citrus">حمضي</button>
+        <button class="filter-chip" data-filter="Winter">شتوي</button>
+        <button class="filter-chip" data-filter="Summer">صيفي</button>
+      </div>
+
+      <div class="perfume-grid" id="perfumeGrid"></div>
+
+      <div class="collection-banner">
+        <div>
+          <small>SCENTORY LIBRARY</small>
+          <h2>ابنِ مكتبتك العطرية الخاصة</h2>
+          <p>احفظ ما تملكه، ما تريد تجربته، وقائمة مشترياتك. كل ذلك في مكان واحد.</p>
+        </div>
+        <div class="banner-bottles" id="bannerBottles"></div>
+        <button class="gold-btn" data-view-jump="library">افتح مكتبتي ←</button>
+      </div>
+    </section>
+
+    <section class="view" id="view-library">
+      <div class="view-head">
+        <div><h1>مكتبتي</h1><p>العطور المحفوظة في قوائمك الشخصية.</p></div>
+      </div>
+      <div class="library-tabs" id="libraryTabs"></div>
+      <div class="perfume-grid" id="libraryGrid"></div>
+      <div class="empty-state hidden" id="libraryEmpty"><span>♡</span><h3>هذه القائمة فارغة</h3><p>اختر أي عطر وأضفه من لوحة التفاصيل.</p></div>
+    </section>
+
+    <section class="view" id="view-collections">
+      <div class="view-head"><div><h1>المجموعات</h1><p>تصنيف تلقائي بحسب الأكوردات والمواسم.</p></div></div>
+      <div class="collections-grid" id="collectionsGrid"></div>
+      <div class="collection-result hidden" id="collectionResult">
+        <button class="ghost-btn" id="backCollections">← العودة</button>
+        <h2 id="collectionTitle"></h2>
+        <div class="perfume-grid" id="collectionGrid"></div>
+      </div>
+    </section>
+
+    <section class="view" id="view-dna">
+      <div class="view-head"><div><h1>Scent DNA</h1><p>تحليل تلقائي لميولك من المفضلة والعطور التي تملكها.</p></div></div>
+      <div class="dna-panel">
+        <div class="dna-orb"><strong id="dnaCount">0</strong><span>عطر محلل</span></div>
+        <div class="dna-bars" id="dnaBars"></div>
+      </div>
+      <div class="insight" id="dnaInsight"></div>
+    </section>
+
+    <section class="view" id="view-compare">
+      <div class="view-head"><div><h1>المقارنة</h1><p>قارن ثلاثة عطور من حيث الأكوردات والنوتات والتقييم.</p></div></div>
+      <div class="compare-selects"><select id="compareA"></select><select id="compareB"></select><select id="compareC"></select></div>
+      <div class="compare-grid" id="compareGrid"></div>
+    </section>
+  </main>
+
+  <aside class="detail-panel" id="detailPanel" aria-label="تفاصيل العطر">
+    <div id="detailContent"></div>
+  </aside>
+</div>
+
+<nav class="mobile-nav">
+  <button class="mobile-nav-btn active" data-view="discover"><span>⌂</span><small>اكتشف</small></button>
+  <button class="mobile-nav-btn" data-view="library"><span>♡</span><small>مكتبتي</small></button>
+  <button class="mobile-nav-btn" data-view="collections"><span>◇</span><small>المجموعات</small></button>
+  <button class="mobile-nav-btn" data-view="dna"><span>⌁</span><small>DNA</small></button>
+  <button class="mobile-nav-btn" data-view="compare"><span>⇄</span><small>مقارنة</small></button>
+</nav>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script src="app.js"></script>
+</body>
+</html>
