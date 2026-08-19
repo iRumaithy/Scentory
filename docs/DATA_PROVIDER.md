@@ -1,1 +1,2 @@
-
+# Scentory data quality policy
+Facts are normalized from official brand pages first, then licensed structured providers. Do not invent note pyramids or present editorial scent-profile bars as factual community percentages. Every catalog item stores source name, source URL, review date, and image approval status. A future Parfumo/other provider adapter must only be enabled when its API/licence explicitly permits reuse.
