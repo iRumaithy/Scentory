@@ -1,0 +1,269 @@
+
+/* SCENTORY v0.4.1 — mobile-first production polish */
+:root{
+  --mobile-bottom-safe: calc(84px + env(safe-area-inset-bottom));
+}
+
+/* Never crop bottle caps or bases */
+.card-image,
+.detail-product,
+.banner-bottles,
+.similar-card{
+  overflow: visible !important;
+}
+.card-image img,
+.detail-product img,
+.banner-bottles img,
+.similar-card img{
+  -webkit-mask-image:none !important;
+  mask-image:none !important;
+  clip-path:none !important;
+  object-fit:contain !important;
+  object-position:center center !important;
+}
+
+/* Consistent bottle stage */
+.card-image{
+  height:186px !important;
+  padding:12px 10px 6px;
+  background:radial-gradient(circle at 50% 70%,rgba(215,179,107,.08),transparent 48%) !important;
+}
+.card-image img{
+  width:auto !important;
+  height:auto !important;
+  max-width:82% !important;
+  max-height:168px !important;
+  filter:drop-shadow(0 14px 18px rgba(0,0,0,.35)) !important;
+}
+.detail-product{
+  min-height:250px;
+  padding:16px;
+}
+.detail-product img{
+  max-width:88% !important;
+  max-height:235px !important;
+}
+
+/* Note circles: same dimensions/crop everywhere */
+.note-strip{
+  grid-template-columns:repeat(3,minmax(0,1fr)) !important;
+  gap:16px 10px !important;
+}
+.note-item{
+  min-width:0 !important;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.note-thumb{
+  width:72px !important;
+  height:72px !important;
+  border-radius:50% !important;
+  border:1.5px solid #596874 !important;
+  padding:3px;
+  background:#0d1419 !important;
+  box-shadow:0 8px 24px rgba(0,0,0,.28);
+}
+.note-thumb img{
+  width:100% !important;
+  height:100% !important;
+  border-radius:50% !important;
+  object-fit:cover !important;
+  object-position:center !important;
+}
+.note-item span{
+  max-width:96px;
+  margin-top:8px !important;
+  font-size:11px !important;
+  line-height:1.25;
+  white-space:normal !important;
+  overflow:visible !important;
+  text-overflow:clip !important;
+}
+
+/* Version */
+.app-version-footer{
+  padding:28px 12px calc(22px + env(safe-area-inset-bottom));
+  text-align:center;
+  color:#66727a;
+  font-size:11px;
+  letter-spacing:.7px;
+}
+
+/* Phone is the priority target */
+@media (max-width: 820px){
+  html,body{max-width:100%;overflow-x:hidden}
+  body{background:#090e12}
+  .app-shell{
+    display:block !important;
+    min-height:100dvh;
+  }
+  .sidebar{display:none !important}
+  .workspace{
+    width:100%;
+    padding:0 14px var(--mobile-bottom-safe) !important;
+    border:0 !important;
+  }
+  .topbar{
+    height:auto !important;
+    min-height:92px;
+    padding:calc(10px + env(safe-area-inset-top)) 0 12px;
+    gap:8px;
+    background:rgba(9,14,18,.96) !important;
+  }
+  .searchbox{
+    height:54px !important;
+    border-radius:16px !important;
+    padding:0 14px !important;
+  }
+  .searchbox input{
+    font-size:16px !important; /* avoids iOS zoom */
+  }
+  .round-btn{
+    width:50px !important;
+    height:50px !important;
+    flex:0 0 50px;
+  }
+  .view-head{
+    padding:16px 2px 10px !important;
+    align-items:center;
+  }
+  .view-head h1{font-size:20px !important}
+  .view-head p{font-size:11px}
+  .head-actions{display:none}
+  .filter-row{
+    flex-wrap:nowrap !important;
+    overflow-x:auto;
+    scrollbar-width:none;
+    margin-inline:-14px;
+    padding:8px 14px 14px !important;
+    scroll-snap-type:x proximity;
+  }
+  .filter-row::-webkit-scrollbar{display:none}
+  .filter-chip{
+    flex:0 0 auto;
+    min-width:86px !important;
+    min-height:48px;
+    font-size:15px;
+    border-radius:14px !important;
+    scroll-snap-align:start;
+  }
+
+  .perfume-grid{
+    grid-template-columns:repeat(2,minmax(0,1fr)) !important;
+    gap:12px !important;
+  }
+  .perfume-card{
+    min-height:0 !important;
+    border-radius:20px !important;
+    padding:10px 9px 14px !important;
+  }
+  .card-image{
+    height:195px !important;
+    padding:14px 8px 4px !important;
+  }
+  .card-image img{
+    max-height:176px !important;
+    max-width:88% !important;
+  }
+  .card-copy h3{
+    font-size:13px !important;
+    min-height:33px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .card-copy .brand{font-size:11px !important}
+  .card-footer{font-size:11px !important}
+  .card-heart{
+    width:38px !important;
+    height:38px !important;
+    font-size:27px !important;
+  }
+
+  .collection-banner{
+    display:block !important;
+    padding:18px !important;
+    margin-top:20px !important;
+  }
+  .banner-bottles{margin:16px 0}
+  .gold-btn{width:100%;min-height:46px}
+
+  .detail-panel{
+    position:fixed !important;
+    inset:0 !important;
+    z-index:100 !important;
+    width:100% !important;
+    height:100dvh !important;
+    padding:calc(8px + env(safe-area-inset-top)) 10px var(--mobile-bottom-safe) !important;
+    border:0 !important;
+    background:#090e12 !important;
+    transform:translateY(105%);
+    transition:transform .24s ease;
+    overflow-y:auto !important;
+  }
+  .detail-panel.open{transform:translateY(0)}
+  .detail-card{border-radius:20px !important}
+  .detail-top{
+    grid-template-columns:1fr !important;
+    text-align:center;
+    padding:12px 14px 18px !important;
+  }
+  .detail-product{height:280px !important}
+  .detail-product img{
+    max-height:260px !important;
+    max-width:82% !important;
+  }
+  .detail-name{font-size:23px !important}
+  .detail-tags,.detail-rating{justify-content:center}
+  .detail-actions{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:10px !important;
+  }
+  .detail-actions button{
+    min-height:58px !important;
+    font-size:13px !important;
+    border-radius:14px !important;
+  }
+  .detail-section{padding:18px 14px !important}
+  .section-label h3{font-size:15px !important}
+  .section-label small{font-size:11px !important}
+  .note-group-title{
+    font-size:12px !important;
+    margin:14px 0 12px !important;
+  }
+  .note-thumb{
+    width:80px !important;
+    height:80px !important;
+  }
+  .note-item span{
+    font-size:11px !important;
+  }
+
+  .mobile-nav{
+    height:76px !important;
+    padding-bottom:env(safe-area-inset-bottom);
+    background:rgba(10,16,20,.97) !important;
+    backdrop-filter:blur(18px);
+    border-top:1px solid #29343c !important;
+  }
+  .mobile-nav-btn{min-width:0}
+  .mobile-nav-btn span{font-size:22px !important}
+  .mobile-nav-btn small{font-size:10px !important}
+
+  .dna-panel,
+  .compare-grid,
+  .collections-grid{
+    grid-template-columns:1fr !important;
+  }
+}
+
+/* Tiny phones */
+@media (max-width:390px){
+  .workspace{padding-inline:10px !important}
+  .perfume-grid{gap:9px !important}
+  .card-image{height:174px !important}
+  .card-image img{max-height:158px !important}
+  .card-copy h3{font-size:12px !important}
+  .note-thumb{width:72px !important;height:72px !important}
+}
