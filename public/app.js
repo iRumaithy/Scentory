@@ -32,13 +32,16 @@ function noteSrc(note){
 function noteFallback(note){ return NOTE_MAP[note]?'assets/notes/'+NOTE_MAP[note]:'assets/notes/iso-e.jpg'; }
 function imageTag(src,alt,cls=''){return `<img class="${cls}" src="${src}" alt="${alt}" loading="lazy">`}
 function stars(){return '★★★★★'}
+function ratingValue(p){return Number.isFinite(p.rating)?p.rating:null}
+function ratingText(p){const r=ratingValue(p);return r===null?'—':r.toFixed(1)}
+function votesText(p){return p.votes?`(${formatVotes(p.votes)})`:'بيانات التقييم قيد الإضافة'}
 
 function card(p){
   return `<article class="perfume-card ${state.selected===p.id?'selected':''}" data-open="${p.id}">
     <button class="card-heart ${isIn('favorite',p.id)?'on':''}" data-fav="${p.id}" aria-label="المفضلة">♡</button>
     <div class="card-image">${imageTag(p.image,p.brand+' '+p.name)}</div>
     <div class="card-copy"><h3>${p.name.toUpperCase()}</h3><div class="brand">${p.brand}</div>
-      <div class="card-footer"><strong>${p.rating.toFixed(1)}</strong><span class="star">★</span><small>(${formatVotes(p.votes)})</small></div>
+      <div class="card-footer"><strong>${ratingText(p)}</strong><span class="star">${ratingValue(p)===null?'✦':'★'}</span><small>${votesText(p)}</small></div>
     </div></article>`;
 }
 function formatVotes(n=0){if(!Number.isFinite(n)||n<=0)return '—';if(n>=1000)return (n/1000).toFixed(n>=10000?0:1)+'k';return String(n)}
@@ -55,7 +58,7 @@ function renderDiscover(){
     return (!q||hay.includes(q))&&filterOk;
   });
   const sort=$('#sortSelect').value;
-  if(sort==='rating')arr.sort((a,b)=>b.rating-a.rating);
+  if(sort==='rating')arr.sort((a,b)=>(ratingValue(b)??-1)-(ratingValue(a)??-1));
   if(sort==='year')arr.sort((a,b)=>b.year-a.year);
   if(sort==='name')arr.sort((a,b)=>a.name.localeCompare(b.name));
   $('#resultCount').textContent=arr.length;
@@ -86,7 +89,7 @@ function renderDetail(){
       <div class="detail-product">${imageTag(p.image,p.brand+' '+p.name)}</div>
       <div><div class="detail-brand">${p.brand.toUpperCase()}</div><h2 class="detail-name">${p.name.toUpperCase()}</h2><div class="detail-type">Eau de Parfum</div>
         <div class="detail-tags"><span>${p.year}</span>${p.tags.slice(0,2).map(t=>`<span>${t}</span>`).join('')}</div>
-        <div class="detail-rating"><strong>${p.rating.toFixed(1)}</strong><span>${stars()}</span><small>(${p.votes.toLocaleString('en-US')})</small></div><a class="source-link" href="${p.sourceUrl}" target="_blank" rel="noopener">المصدر الرسمي: ${p.source} ↗</a>
+        <div class="detail-rating"><strong>${ratingText(p)}</strong><span>${ratingValue(p)===null?'PROFILE VERIFIED':stars()}</span><small>${p.votes?'('+p.votes.toLocaleString('en-US')+')':'لا نعرض تقييماً غير موثّق'}</small></div><a class="source-link" href="${p.sourceUrl}" target="_blank" rel="noopener">المصدر الرسمي: ${p.source} ↗</a>
       </div>
     </div>
     <div class="detail-actions">
@@ -142,7 +145,7 @@ function renderCompare(){
   const opts=PERFUMES.map(p=>`<option value="${p.id}">${p.name} — ${p.brand}</option>`).join('');
   [['compareA','bleu'],['compareB','imagination'],['compareC','oud-wood']].forEach(([id,val])=>{const e=$('#'+id);if(!e.dataset.ready){e.innerHTML=opts;e.value=val;e.dataset.ready='1';e.addEventListener('change',renderCompare)}});
   const items=[$('#compareA').value,$('#compareB').value,$('#compareC').value].map(byId);
-  $('#compareGrid').innerHTML=items.map(p=>`<article class="compare-card">${imageTag(p.image,p.name)}<h3>${p.name}</h3><div class="metric">${p.brand}</div><div class="metric">★ ${p.rating.toFixed(2)} — ${p.year}</div>${Object.entries(p.accords).slice(0,5).map(([a,v])=>`<div class="metric">${a} — ${v}%</div>`).join('')}<div class="metric">${[...p.notes.top,...p.notes.middle,...p.notes.base].slice(0,6).join(' • ')}</div></article>`).join('');
+  $('#compareGrid').innerHTML=items.map(p=>`<article class="compare-card">${imageTag(p.image,p.name)}<h3>${p.name}</h3><div class="metric">${p.brand}</div><div class="metric">${ratingValue(p)===null?'PROFILE':('★ '+p.rating.toFixed(2))} — ${p.year}</div>${Object.entries(p.accords).slice(0,5).map(([a,v])=>`<div class="metric">${a} — ${v}%</div>`).join('')}<div class="metric">${[...p.notes.top,...p.notes.middle,...p.notes.base].slice(0,6).join(' • ')}</div></article>`).join('');
 }
 function switchView(view){
   currentView=view;$$('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+view));
