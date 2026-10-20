@@ -1,0 +1,8 @@
+node_modules/
+.wrangler/
+.catalog-cache/
+dist/
+.openai/
+.env
+.dev.vars
+*.log
