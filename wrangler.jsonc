@@ -1,7 +1,7 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
   "name": "scentory",
-  "main": "src/index-v050.js",
+  "main": "src/index-v200.js",
   "compatibility_date": "2026-08-19",
   "compatibility_flags": ["nodejs_compat"],
   "observability": {
@@ -12,7 +12,7 @@
     "directory": "./public",
     "binding": "ASSETS",
     "not_found_handling": "single-page-application",
-    "run_worker_first": ["/api/*"]
+    "run_worker_first": ["/api/*", "/icons/*"]
   },
   "d1_databases": [
     {
