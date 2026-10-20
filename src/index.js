@@ -1,44 +1,9 @@
+import {pbkdf2, timingSafeEqual} from 'node:crypto';
 const SESSION_COOKIE = 'scentory_session';
 const SESSION_TTL_SECONDS = 60 * 60 * 24 * 365;
 const PBKDF2_ITERATIONS = 180000;
 const LISTS = new Set(['favorite', 'try', 'buy', 'owned']);
 
-const schemaStatements = [
-  `CREATE TABLE IF NOT EXISTS users (
-    id TEXT PRIMARY KEY,
-    username TEXT NOT NULL,
-    username_key TEXT NOT NULL UNIQUE,
-    password_hash TEXT NOT NULL,
-    password_salt TEXT NOT NULL,
-    created_at INTEGER NOT NULL
-  )`,
-  `CREATE TABLE IF NOT EXISTS sessions (
-    token_hash TEXT PRIMARY KEY,
-    user_id TEXT NOT NULL,
-    expires_at INTEGER NOT NULL,
-    created_at INTEGER NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-  )`,
-  `CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id)`,
-  `CREATE INDEX IF NOT EXISTS idx_sessions_expires ON sessions(expires_at)`,
-  `CREATE TABLE IF NOT EXISTS library_items (
-    user_id TEXT NOT NULL,
-    perfume_id TEXT NOT NULL,
-    list_name TEXT NOT NULL,
-    updated_at INTEGER NOT NULL,
-    PRIMARY KEY (user_id, perfume_id, list_name),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-  )`,
-  `CREATE TABLE IF NOT EXISTS personal_reviews (
-    user_id TEXT NOT NULL,
-    perfume_id TEXT NOT NULL,
-    rating INTEGER NOT NULL DEFAULT 0 CHECK(rating BETWEEN 0 AND 10),
-    note TEXT NOT NULL DEFAULT '',
-    updated_at INTEGER NOT NULL,
-    PRIMARY KEY (user_id, perfume_id),
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
-  )`
-];
 
 function json(data, status = 200, headers = {}) {
   return Response.json(data, {
@@ -51,9 +16,6 @@ function error(message, status = 400) {
   return json({ error: message }, status);
 }
 
-async function ensureSchema(db) {
-  await db.batch(schemaStatements.map(sql => db.prepare(sql)));
-}
 
 function normalizeUsername(value) {
   return String(value || '').normalize('NFKC').trim();
@@ -90,19 +52,11 @@ async function digestBase64Url(value) {
 }
 
 async function derivePassword(password, saltBytes) {
-  const key = await crypto.subtle.importKey(
-    'raw',
-    new TextEncoder().encode(password),
-    { name: 'PBKDF2' },
-    false,
-    ['deriveBits']
-  );
-  const bits = await crypto.subtle.deriveBits(
-    { name: 'PBKDF2', hash: 'SHA-256', salt: saltBytes, iterations: PBKDF2_ITERATIONS },
-    key,
-    256
-  );
-  return new Uint8Array(bits);
+  // Same parameters/output as the original hashes; the Node API also works
+  // on Workers runtimes whose SubtleCrypto PBKDF2 has an iteration limit.
+  return new Uint8Array(await new Promise((resolve, reject) => {
+    pbkdf2(password, saltBytes, PBKDF2_ITERATIONS, 32, 'sha256', (err, key) => err ? reject(err) : resolve(key));
+  }));
 }
 
 async function hashPassword(password) {
@@ -116,9 +70,9 @@ async function verifyPassword(password, saltB64, expectedHashB64) {
   const actual = await derivePassword(password, base64ToBytes(saltB64));
   const expected = base64ToBytes(expectedHashB64);
   if (actual.byteLength !== expected.byteLength) {
-    return !crypto.subtle.timingSafeEqual(actual, actual);
+    return false;
   }
-  return crypto.subtle.timingSafeEqual(actual, expected);
+  return timingSafeEqual(actual, expected);
 }
 
 function parseCookies(request) {
@@ -226,7 +180,7 @@ async function handleLogin(request, env) {
     valid = await verifyPassword(password, user.password_salt, user.password_hash);
   } else {
     const attempted = await derivePassword(password, dummySalt);
-    valid = attempted.byteLength === dummyExpected.byteLength && crypto.subtle.timingSafeEqual(attempted, dummyExpected) && false;
+    valid = attempted.byteLength === dummyExpected.byteLength && timingSafeEqual(attempted, dummyExpected) && false;
   }
   if (!valid) return error('اسم المستخدم أو كلمة المرور غير صحيحة', 401);
   const session = await createSession(env.DB, user.id);
@@ -336,7 +290,6 @@ async function route(request, env) {
   const url = new URL(request.url);
   const path = url.pathname;
   if (!path.startsWith('/api/')) return env.ASSETS.fetch(request);
-  await ensureSchema(env.DB);
   if (request.method === 'GET' && path === '/api/health') return json({ ok: true, database: 'ready' });
   if (request.method === 'POST' && path === '/api/auth/register') return handleRegister(request, env);
   if (request.method === 'POST' && path === '/api/auth/login') return handleLogin(request, env);
@@ -360,3 +313,5 @@ export default {
     }
   },
 };
+
+export {requireUser, sameOrigin};

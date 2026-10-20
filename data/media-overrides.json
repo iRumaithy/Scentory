@@ -1,0 +1,22 @@
+{
+  "dhi": {
+    "image": "https://www.dior.com/on/demandware.static/-/Sites-master_dior/default/dwa6fb4b81/Y0479201/Y0479201_F047924709_E01_GHC.jpg",
+    "imageStatus": "official",
+    "imageCheckedAt": "2026-10-20"
+  },
+  "br540": {
+    "image": "https://www.franciskurkdjian.com/dw/image/v2/BJSB_PRD/on/demandware.static/-/Sites-mfk-master-catalog/default/dwa46019b3/BACCARAT_ROUGE_540/FRAGRANCE/3700559603116_BR540_EDP_70ML_1.png?sw=640&sh=640&strip=false",
+    "imageStatus": "official",
+    "imageCheckedAt": "2026-10-20"
+  },
+  "imagination": {
+    "image": "https://us.louisvuitton.com/images/is/image/lv/1/PP_VP_M/louis-vuitton--LP0476_PM2_Front%20view.jpg?wid=750&hei=870",
+    "imageStatus": "official",
+    "imageCheckedAt": "2026-10-20"
+  },
+  "bleu": {
+    "image": "https://www.chanel.com/images//t_one/w_0.51,h_0.51,c_crop/q_auto:good,f_auto,fl_lossy,dpr_1.1/w_620/bleu-de-chanel-eau-de-parfum-spray-3-4fl-oz--packshot-default-107360-9601411448862.jpg",
+    "imageStatus": "official",
+    "imageCheckedAt": "2026-10-20"
+  }
+}

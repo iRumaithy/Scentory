@@ -1,0 +1,22 @@
+name: Scentory checks
+on:
+  push:
+    branches: [main, codex/scentory-rebuild]
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - name: Bundle the production Worker without deploying
+        run: npx esbuild src/index-v200.js --bundle --format=esm --platform=neutral --external:node:crypto --outfile=/tmp/scentory-worker.mjs
+      - name: Check browser modules
+        run: node --check public/app.js && node --check public/core.mjs && node --check public/sw.js
